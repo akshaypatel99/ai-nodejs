@@ -10,7 +10,9 @@
 	"author": "Akshay Patel",
 	"license": "ISC",
 	"dependencies": {
+		"@langchain/openai": "^0.0.24",
 		"dotenv": "^16.4.5",
+		"langchain": "^0.1.30",
 		"openai": "^4.29.2"
 	}
 }
