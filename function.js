@@ -15,6 +15,11 @@ const functions = {
 	calculate: async ({ expression }) => {
 		return math.evaluate(expression);
 	},
+	generateImage: async ({ prompt }) => {
+		const result = await openai.images.generate({ prompt });
+		console.log(result.data[0].url);
+		return result.data[0].url;
+	},
 };
 
 const getCompletion = async (messages) => {
@@ -40,6 +45,25 @@ const getCompletion = async (messages) => {
 					},
 				},
 			},
+			{
+				type: 'function',
+				function: {
+					name: 'generateImage',
+					description:
+						'Create or generate image based on a description',
+					parameters: {
+						type: 'object',
+						properties: {
+							prompt: {
+								type: 'string',
+								description:
+									'The description of the image to generate',
+							},
+						},
+						required: ['prompt'],
+					},
+				},
+			},
 		],
 		tool_choice: 'auto',
 		temperature: 0,
@@ -61,7 +85,7 @@ while (true) {
 		const args =
 			response.choices[0].message.tool_calls[0].function.arguments;
 
-		const functionToCall = functions[fnName];
+		const functionToCall = await functions[fnName];
 		const params = JSON.parse(args);
 
 		const result = functionToCall(params);
